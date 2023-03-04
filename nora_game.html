@@ -117,6 +117,8 @@
 
 			rectangles.rList = [...array].sort(() => Math.random() - 0.5);
 
+
+
 			console.log("Array: ", array);
 			console.log("rlist: ", rectangles.rList);
 
@@ -142,9 +144,16 @@
 					rectangles.shorten();
 					ctxGrad.clearRect(0, 0, canvasGrad.width, canvasGrad.height);
 					draw_black();
-					rectangles.draw();
+					if (rectangles.rList.length > 0) {
+						rectangles.draw();
+					} else {
+						alert("WINNER");
+					}
+
+
+
 				} else {
-					//alert('No');
+					alert('No');
 				}
 			})
 
