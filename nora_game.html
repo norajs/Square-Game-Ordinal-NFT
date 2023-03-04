@@ -60,10 +60,12 @@
 			canvasGrad.style.height = '100vh';
 			canvasGrad.getContext('2d').scale(2,2);
 			var ctxGrad = canvasGrad.getContext("2d");
-			ctxGrad.fillStyle = "black";
-			ctxGrad.fillRect(0, 0, 4096, 4096);
-			//default squares
-			ctxGrad.globalAlpha = 0.7;
+
+			function draw_black() {
+				ctxGrad.globalAlpha = 1;
+				ctxGrad.fillStyle = "black";
+				ctxGrad.fillRect(0, 0, 4096, 4096);
+			}
 
 			/*Globals*/
 			var color1 = randomColor();
@@ -120,6 +122,7 @@
 
 
 //ACTION
+			draw_black();
 			rectangles.draw();
 
 			canvasGrad.addEventListener("click", function(e) {
@@ -135,12 +138,13 @@
 				console.log("Click Y: ", canvasRelativeY);
 				// normally you would loop through your paths objects:
 				if (ctxGrad.isPointInPath(lastSquare, canvasRelativeX, canvasRelativeY)) {
-					alert("Yes!");
+					//alert("Yes!");
 					rectangles.shorten();
 					ctxGrad.clearRect(0, 0, canvasGrad.width, canvasGrad.height);
+					draw_black();
 					rectangles.draw();
 				} else {
-					alert('No');
+					//alert('No');
 				}
 			})
 
@@ -160,6 +164,7 @@
 
 				//draw from current array
 				this.draw = function() {
+					ctxGrad.globalAlpha = 0.7;
 					for (let i = 0; i < this.rList.length; i++) {
 						//DRAW RECTANGLES FROM LIST
 						//THIS RUNS INITIALLY, THEN EVERY TIME A CLICK IS TRUE WITH UPDATED LIST (AFTER CLEAR RECT)
