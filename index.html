@@ -120,6 +120,7 @@
 				canvas.height = 1;
 				const ctx = canvas.getContext('2d');
 				ctx && ctx.clearRect(0, 0, 1, 1);
+				canvas.remove();
 			}
 
 			function modalUp() {
@@ -259,9 +260,13 @@
 
 						//if click coordinates are inside last rectangle's path
 						if (ctxGrad.isPointInPath(lastSquare, canvasRelativeX, canvasRelativeY)) {
+							yesSound.stop();
+							noSound.stop();
 							yesSound.play();
 							rectangles.updateCanvas();
 						} else {
+							yesSound.stop();
+							noSound.stop();
 							noSound.play();
 						}
 
