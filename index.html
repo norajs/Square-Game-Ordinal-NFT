@@ -19,6 +19,20 @@
 				/*overflow: hidden;*/
 			}
 
+			@media (orientation: portrait) {
+				canvas {
+					width: 100vw;
+					height: 100vw;
+				}
+			}
+
+			@media (orientation: landscape) {
+				canvas {
+					width: 100vh;
+					height: 100vh;
+				}
+			}
+
 			/* The Modal (background) */
 			.modal {
 				display: none; /* Hidden by default */
@@ -86,7 +100,7 @@
 
     <body>
 
-		<div style="text-align:center">
+		<div style="text-align: center">
 			<canvas id="myCanvasGrad" style="object-fit: contain;"></canvas>
 		</div>
 
@@ -151,8 +165,8 @@
 			var canvasGrad = document.getElementById('myCanvasGrad');
 			canvasGrad.width =4096;
 			canvasGrad.height = 4096;
-			canvasGrad.style.width = "100vw";
-			canvasGrad.style.height = '100vh';
+			//canvasGrad.style.width = "100vw";
+			//canvasGrad.style.height = '100vh';
 			//canvasGrad.getContext('2d').scale(2,2);
 			var ctxGrad = canvasGrad.getContext("2d");
 
@@ -261,18 +275,15 @@
 						const canvasRelativeX = elementRelativeX * canvasGrad.width / rect.width;
 						const canvasRelativeY = elementRelativeY * canvasGrad.height / rect.height;
 
-						//console.log(`C X: ${canvasRelativeX}  in ${rectangles.rList[rectangles.rList.length -1].x} - ${rectangles.rList[rectangles.rList.length -1].x + rectangles.rList[rectangles.rList.length -1].width}`);
-						//console.log(`C Y: ${canvasRelativeY}  in ${rectangles.rList[rectangles.rList.length -1].y} - ${rectangles.rList[rectangles.rList.length -1].y + rectangles.rList[rectangles.rList.length -1].height}`);
+						console.log(`Click X: ${canvasRelativeX}`);
+						console.log(`Click Y: ${canvasRelativeY}`);
+						console.log(`-----------------------`);
 
 						//if click coordinates are inside last rectangle's path
 						if (ctxGrad.isPointInPath(lastSquare, canvasRelativeX, canvasRelativeY)) {
-							yesSound.stop();
-							noSound.stop();
 							yesSound.play();
 							rectangles.updateCanvas();
 						} else {
-							yesSound.stop();
-							noSound.stop();
 							noSound.play();
 						}
 
@@ -306,7 +317,7 @@
 
 							console.log(`X: ${this.rList[i].x} / ${this.rList[i].x} + ${this.rList[i].width}`);
 							console.log(`Y: ${this.rList[i].y} / ${this.rList[i].y} + ${this.rList[i].height}`);
-							console.log("---------------------------");
+							console.log(`#######################`);
 						} else {
 							ctxGrad.fillStyle = this.rList[i].gradient;
 						}
