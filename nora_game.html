@@ -117,10 +117,12 @@
 
 			rectangles.rList = [...array].sort(() => Math.random() - 0.5);
 
-
-
-			console.log("Array: ", array);
-			console.log("rlist: ", rectangles.rList);
+			//add paths to array
+			for (let i = 0; i < rectangles.rList.length; i++) {
+				let path = new Path2D();
+				path.rect(rectangles.rList[i].x, rectangles.rList[i].y, rectangles.rList[i].width, rectangles.rList[i].height);
+				rectangles.rList[i].path = path;
+			}
 
 
 //ACTION
@@ -128,38 +130,22 @@
 			rectangles.draw();
 
 			canvasGrad.addEventListener("click", function(e) {
-				//x = getRelativeCoords(e).x;
-				//y = getRelativeCoords(e).y;
 				const rect = canvasGrad.getBoundingClientRect();
 				const elementRelativeX = e.clientX - rect.left;
 				const elementRelativeY = e.clientY - rect.top;
 				const canvasRelativeX = elementRelativeX * canvasGrad.width / rect.width;
 				const canvasRelativeY = elementRelativeY * canvasGrad.height / rect.height;
 
-				console.log("Click X: ", canvasRelativeX);
-				console.log("Click Y: ", canvasRelativeY);
-				// normally you would loop through your paths objects:
+				console.log(`Click X: ${canvasRelativeX}  inside ${rectangles.rList[rectangles.rList.length -1].x} - ${rectangles.rList[rectangles.rList.length -1].x + rectangles.rList[rectangles.rList.length -1].width}`);
+				console.log(`Click Y: ${canvasRelativeY}  inside ${rectangles.rList[rectangles.rList.length -1].y} - ${rectangles.rList[rectangles.rList.length -1].y + rectangles.rList[rectangles.rList.length -1].height}`);
+
+				//if click coordinates are inside last rectangle's path
 				if (ctxGrad.isPointInPath(lastSquare, canvasRelativeX, canvasRelativeY)) {
-					//alert("Yes!");
-					rectangles.shorten();
-					ctxGrad.clearRect(0, 0, canvasGrad.width, canvasGrad.height);
-					draw_black();
-					if (rectangles.rList.length > 0) {
-						rectangles.draw();
-					} else {
-						alert("WINNER");
-					}
-
-
-
+					rectangles.updateCanvas();
 				} else {
-					alert('No');
+					//alert('No');
 				}
 			})
-
-			function getRelativeCoords(event) {
-				return { x: event.offsetX, y: event.offsetY };
-			}
 
 			//rectangles object constructor
 			function Rectangles() {
@@ -177,113 +163,41 @@
 					for (let i = 0; i < this.rList.length; i++) {
 						//DRAW RECTANGLES FROM LIST
 						//THIS RUNS INITIALLY, THEN EVERY TIME A CLICK IS TRUE WITH UPDATED LIST (AFTER CLEAR RECT)
-						//console.log(`Path${i+1}: (${rectangle.x}, ${rectangle.y}, ${rectangle.width}, ${rectangle.height})`)
 						if (i == this.rList.length -1) {
-							ctxGrad.fillStyle = "red";
+							//ctxGrad.fillStyle = "red";
+							ctxGrad.fillStyle = this.rList[i].gradient;
 						} else {
 							ctxGrad.fillStyle = this.rList[i].gradient;
 						}
-						var path = new Path2D();
-						path.rect(this.rList[i].x, this.rList[i].y, this.rList[i].width, this.rList[i].height);
-						this.rList[i].path = path;
+						let path = this.rList[i].path;
 						ctxGrad.fill(path);
 					}
 					lastSquare = this.rList[this.rList.length -1].path;
+				}
+
+				this.updateCanvas = function() {
+					this.shorten();
+					ctxGrad.clearRect(0, 0, canvasGrad.width, canvasGrad.height);
+					draw_black();
+					if (this.rList.length > 0) {
+						this.draw();
+					} else {
+						console.log("WINNER");
+					}
 				}
 
 				//takes away the last element on the array
 				this.shorten = function() {
 					this.rList.pop();
 				}
-
 			}
 
-			/*
-                        ctxGrad.fillStyle = grdBg1;
-                        var path1 = new Path2D();
-                        path1.rect(0, 0, 1024, 1500);
-                        ctxGrad.fill(path1);
-                        ctxGrad.closePath();
-                        //squares.push(path1);
-                        //squares.path = path1;
-                        rectangles.adder(path1, 0, 0, 1024, 1500, grdBg1);
-
-
-
-                        ctxGrad.fillStyle = grdBg2;
-                        height = getRandomInt(1024, 1550);
-                        var path2 = new Path2D();
-                        path2.rect(1024, 0, 1024, height);
-                        ctxGrad.fill(path2);
-                        ctxGrad.closePath();
-                        //squares.push(path2);
-                        //squares.path = path2;
-                        rectangles.adder(path2, 1024, 0, 1024, height, grdBg2);
-
-                        ctxGrad.fillStyle = grdBg2;
-                        var path3 = new Path2D();
-                        path3.rect(0, 512, 1024, 1550);
-                        ctxGrad.fill(path3);
-                        ctxGrad.closePath();
-                        //squares.push(path3);
-                        //squares.path = path3;
-                        rectangles.adder(path3, 0, 512, 1024, 1550, grdBg2);
-
-                        ctxGrad.fillStyle = grdBg1;
-                        var path4 = new Path2D();
-                        path4.rect(1024, 1024, 1024, 1024);
-                        ctxGrad.fill(path4);
-                        ctxGrad.closePath();
-                        //squares.push(path4);
-                        //squares.path = path4;
-                        rectangles.adder(path4, 1024, 1024, 1024, 1024, grdBg1);
-
-                        ctxGrad.fillStyle = grdBg2;
-                        x = getRandomInt(512, 1024);
-                        y = getRandomInt(128, 768);
-                        var path5 = new Path2D();
-                        path5.rect(x, y, 1024, 1024);
-                        ctxGrad.fill(path5);
-                        ctxGrad.closePath();
-                        //squares.push(path5);
-                        //squares.path = path5;
-                        rectangles.adder(path5, x, y, 1024, 1024, grdBg2);
-
-                        ctxGrad.fillStyle = grdBg1;
-                        height = getRandomInt(512, 1024);
-                        var path6 = new Path2D();
-                        path6.rect(1024, 0, 1024, height);
-                        ctxGrad.fill(path6);
-                        ctxGrad.closePath();
-                        //squares.push(path6);
-                        //squares.path = path6;
-                        rectangles.adder(path6, 1024, 0, 1024, height, grdBg1);
-
-                        ctxGrad.fillStyle = grdBg1;
-                        height = getRandomInt(128, 512);
-                        var path7 = new Path2D();
-                        path7.rect(0, 0, 1024, height);
-                        ctxGrad.fill(path7);
-                        ctxGrad.closePath();
-                        //squares.push(path7);
-                        //squares.path = path7;
-                        rectangles.adder(path7, 0, 0, 1024, height, grdBg1);
-
-                        ctxGrad.fillStyle = "red";
-                        height = getRandomInt(128, 512);
-                        x = getRandomInt(0, 1500);
-                        y = getRandomInt(0, 1500);
-                        var path8 = new Path2D();
-                        path8.rect(x, y, 1024, height);
-                        ctxGrad.fill(path8);
-                        ctxGrad.closePath();
-                        //squares.push(path8);
-                        //squares.path = path8;
-                        rectangles.adder(path8, x, y, 1024, height, "red");
-
-                        console.log(rectangles.rList);
-            */
-
+			window.addEventListener('pagehide', (event) => {
+				/*Release every canvas*/
+				var canvases = document.getElementsByTagName("canvas");
+				var canvasesList = Array.prototype.slice.call(canvases);
+				canvasesList.forEach(releaseCanvas);
+			});
 
 		</script>
 	</body>
