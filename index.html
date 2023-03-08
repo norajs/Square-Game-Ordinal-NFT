@@ -161,6 +161,12 @@
 				}
 			}
 
+			function draw_black() {
+				ctxGrad.globalAlpha = 1;
+				ctxGrad.fillStyle = "black";
+				ctxGrad.fillRect(0, 0, 4096, 4096);
+			}
+
 			//canvas init
 			var canvasGrad = document.getElementById('myCanvasGrad');
 			canvasGrad.width =4096;
@@ -170,13 +176,9 @@
 			//canvasGrad.getContext('2d').scale(2,2);
 			var ctxGrad = canvasGrad.getContext("2d");
 
-			function draw_black() {
-				ctxGrad.globalAlpha = 1;
-				ctxGrad.fillStyle = "black";
-				ctxGrad.fillRect(0, 0, 4096, 4096);
-			}
-
 			/*Globals*/
+			var plusSquares = getRandomInt(4, 47);
+
 			var color1 = randomColor();
 			var color2 = randomColor();
 			//var squareCounter = 7;
@@ -208,31 +210,36 @@
 			var height3 = getRandomInt(512, 1024);
 			var height4 = getRandomInt(512, 1024);
 
-
-
 			var lastSquare;
+
+			const array = [
+				//{x: 0, y: 0, width: 2500, height: 2215, gradient: grdBg1},
+				//{x: 1000, y: 988, width: 4096, height: 4096, gradient: grdBg1},
+				//{x: 1800, y: 0, width: 2048, height: height1, gradient: grdBg2},
+				//{x: 0, y: 1024, width: 4000, height: 3100, gradient: grdBg2},
+				//{x: 1640, y: 2048, width: 2048, height: 2048, gradient: grdBg1},
+				//{x: x1, y: y1, width: 2048, height: 512, gradient: grdBg2},
+				//{x: 1850, y: 0, width: 2048, height: height2, gradient: grdBg1},
+				//{x: 0, y: 0, width: 2148, height: height3, gradient: grdBg1},
+				// {x: x2, y: y2, width: 2248, height: height4, gradient: grdBg2}
+				{x: 0, y: 0, width: 3200, height: 1700, gradient: grdBg1},
+				{x: 2500, y: 0, width: 1596, height: 4096, gradient: grdBg1},
+				{x: 0, y: 1300, width: 2600, height: 2796, gradient: grdBg2},
+			];
 
 			//objects
 			var yesSound = new Sound("sounds/yes.wav");
 			var noSound = new Sound("sounds/no.wav");
-			var rectangles = new Rectangles();
-
-			const array = [
-				{x: 0, y: 0, width: 2500, height: 2215, gradient: grdBg1},
-				{x: 1000, y: 988, width: 4096, height: 4096, gradient: grdBg1},
-				{x: 1800, y: 0, width: 2048, height: height1, gradient: grdBg2},
-				{x: 0, y: 1024, width: 4000, height: 3100, gradient: grdBg2},
-				{x: 1640, y: 2048, width: 2048, height: 2048, gradient: grdBg1},
-				{x: x1, y: y1, width: 2048, height: 512, gradient: grdBg2},
-				{x: 1850, y: 0, width: 2048, height: height2, gradient: grdBg1},
-				{x: 0, y: 0, width: 2148, height: height3, gradient: grdBg1},
-				{x: x2, y: y2, width: 2248, height: height4, gradient: grdBg2}
-			];
-
+			var rectangles = new Rectangles(plusSquares);
 
 
 			rectangles.rList = [...array].sort(() => Math.random() - 0.5);
 			console.log(rectangles.rList);
+
+
+//ACTION
+			draw_black();
+			rectangles.adder();
 
 			//add paths to array
 			for (let i = 0; i < rectangles.rList.length; i++) {
@@ -241,68 +248,33 @@
 				rectangles.rList[i].path = path;
 			}
 
-
-//ACTION
-			draw_black();
 			rectangles.draw();
 
-			/*canvasGrad.addEventListener("click", function(e) {
-				const rect = canvasGrad.getBoundingClientRect();
-				const elementRelativeX = e.clientX - rect.left;
-				const elementRelativeY = e.clientY - rect.top;
-				const canvasRelativeX = elementRelativeX * canvasGrad.width / rect.width;
-				const canvasRelativeY = elementRelativeY * canvasGrad.height / rect.height;
 
-				console.log(`Click X: ${canvasRelativeX}  inside ${rectangles.rList[rectangles.rList.length -1].x} - ${rectangles.rList[rectangles.rList.length -1].x + rectangles.rList[rectangles.rList.length -1].width}`);
-				console.log(`Click Y: ${canvasRelativeY}  inside ${rectangles.rList[rectangles.rList.length -1].y} - ${rectangles.rList[rectangles.rList.length -1].y + rectangles.rList[rectangles.rList.length -1].height}`);
-
-				//if click coordinates are inside last rectangle's path
-				if (ctxGrad.isPointInPath(lastSquare, canvasRelativeX, canvasRelativeY)) {
-					rectangles.updateCanvas();
-				} else {
-					//alert('No');
-				}
-			}) */
-
-			/*onclick refresh event*/
-			let timer;
-			document.getElementById("myCanvasGrad").addEventListener('click', function(e) {
-				if (e.detail === 1) {
-					timer = setTimeout(() => {
-						const rect = canvasGrad.getBoundingClientRect();
-						const elementRelativeX = e.clientX - rect.left;
-						const elementRelativeY = e.clientY - rect.top;
-						const canvasRelativeX = elementRelativeX * canvasGrad.width / rect.width;
-						const canvasRelativeY = elementRelativeY * canvasGrad.height / rect.height;
-
-						console.log(`Click X: ${canvasRelativeX}`);
-						console.log(`Click Y: ${canvasRelativeY}`);
-						console.log(`-----------------------`);
-
-						//if click coordinates are inside last rectangle's path
-						if (ctxGrad.isPointInPath(lastSquare, canvasRelativeX, canvasRelativeY)) {
-							yesSound.play();
-							rectangles.updateCanvas();
-						} else {
-							noSound.play();
-						}
-
-					}, 200)
-				}
-			});
-			document.getElementById("myCanvasGrad").addEventListener('dblclick', function(e) {
-				clearTimeout(timer);
-				modalUp();
-			})
 
 			//rectangles object constructor
-			function Rectangles() {
+			function Rectangles(plusSquares) {
 				//array
 				this.rList = [];
 
+				//how many more squares to add to array
+				this.plusSquares = plusSquares;
+
+				//max number of squares in current game
+				this.maxLevel = plusSquares + 3;
+
 				//add a new object to the array
-				this.adder = function(path, x, y, width, height, gradient) {
-					this.rList.push({ path: path, x: x, y: y, width: width, height: height, gradient: gradient });
+				this.adder = function() {
+					console.log(this.plusSquares);
+					for (let i = 0; i < plusSquares; i++) {
+						let x = getRandomInt(0, 3096);
+						let y = getRandomInt(0, 3096);
+						let width = getRandomInt(999, 4096 - x);
+						let height = getRandomInt(999, 4096 - y);
+						let gradient = getRandomInt(0, 1) > 0 ? grdBg1 : grdBg2;
+						this.rList.push({x: x, y: y, width: width, height: height, gradient: gradient });
+					}
+					console.log(this.rList);
 				}
 
 				//draw from current array
@@ -359,6 +331,55 @@
 					this.sound.pause();
 				}
 			}
+
+			/*canvasGrad.addEventListener("click", function(e) {
+				const rect = canvasGrad.getBoundingClientRect();
+				const elementRelativeX = e.clientX - rect.left;
+				const elementRelativeY = e.clientY - rect.top;
+				const canvasRelativeX = elementRelativeX * canvasGrad.width / rect.width;
+				const canvasRelativeY = elementRelativeY * canvasGrad.height / rect.height;
+
+				console.log(`Click X: ${canvasRelativeX}  inside ${rectangles.rList[rectangles.rList.length -1].x} - ${rectangles.rList[rectangles.rList.length -1].x + rectangles.rList[rectangles.rList.length -1].width}`);
+				console.log(`Click Y: ${canvasRelativeY}  inside ${rectangles.rList[rectangles.rList.length -1].y} - ${rectangles.rList[rectangles.rList.length -1].y + rectangles.rList[rectangles.rList.length -1].height}`);
+
+				//if click coordinates are inside last rectangle's path
+				if (ctxGrad.isPointInPath(lastSquare, canvasRelativeX, canvasRelativeY)) {
+					rectangles.updateCanvas();
+				} else {
+					//alert('No');
+				}
+			}) */
+
+			/*onclick refresh event*/
+			let timer;
+			document.getElementById("myCanvasGrad").addEventListener('click', function(e) {
+				if (e.detail === 1) {
+					timer = setTimeout(() => {
+						const rect = canvasGrad.getBoundingClientRect();
+						const elementRelativeX = e.clientX - rect.left;
+						const elementRelativeY = e.clientY - rect.top;
+						const canvasRelativeX = elementRelativeX * canvasGrad.width / rect.width;
+						const canvasRelativeY = elementRelativeY * canvasGrad.height / rect.height;
+
+						console.log(`Click X: ${canvasRelativeX}`);
+						console.log(`Click Y: ${canvasRelativeY}`);
+						console.log(`-----------------------`);
+
+						//if click coordinates are inside last rectangle's path
+						if (ctxGrad.isPointInPath(lastSquare, canvasRelativeX, canvasRelativeY)) {
+							yesSound.play();
+							rectangles.updateCanvas();
+						} else {
+							noSound.play();
+						}
+
+					}, 200)
+				}
+			});
+			document.getElementById("myCanvasGrad").addEventListener('dblclick', function(e) {
+				clearTimeout(timer);
+				modalUp();
+			})
 
 			window.addEventListener('pagehide', (event) => {
 				/*Release every canvas*/
