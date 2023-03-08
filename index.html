@@ -238,16 +238,13 @@
 
 
 //ACTION
+			//fill canvas with black
 			draw_black();
+			//add more squares to array
 			rectangles.adder();
-
-			//add paths to array
-			for (let i = 0; i < rectangles.rList.length; i++) {
-				let path = new Path2D();
-				path.rect(rectangles.rList[i].x, rectangles.rList[i].y, rectangles.rList[i].width, rectangles.rList[i].height);
-				rectangles.rList[i].path = path;
-			}
-
+			//make paths from array object properties and add them to the object itself
+			rectangles.addPaths();
+			//draw squares from array
 			rectangles.draw();
 
 
@@ -275,6 +272,16 @@
 						this.rList.push({x: x, y: y, width: width, height: height, gradient: gradient });
 					}
 					console.log(this.rList);
+				}
+
+				this.addPaths = function() {
+					//add paths to array elements
+					for (let i = 0; i < this.rList.length; i++) {
+						let path = new Path2D();
+						path.rect(this.rList[i].x, this.rList[i].y, this.rList[i].width, this.rList[i].height);
+						this.rList[i].path = path;
+					}
+
 				}
 
 				//draw from current array
