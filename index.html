@@ -343,6 +343,7 @@
 			rectangles.addPaths();
 			//draw squares from array
 			rectangles.draw();
+			console.log("rLIST COPY", rectangles.rListCopy);
 
 
 
@@ -350,6 +351,9 @@
 			function Rectangles(plusSquares) {
 				//array
 				this.rList = [];
+
+				//copy of original array
+				this.rListCopy = [];
 
 				//how many more squares to add to array
 				this.plusSquares = plusSquares;
@@ -377,6 +381,9 @@
 						let path = new Path2D();
 						path.rect(this.rList[i].x, this.rList[i].y, this.rList[i].width, this.rList[i].height);
 						this.rList[i].path = path;
+
+						//also: make a copy of the array
+						this.rListCopy.push(this.rList[i]);
 					}
 
 				}
@@ -411,6 +418,7 @@
 						this.draw();
 					} else {
 						console.log("WINNER");
+						this.stats();
 						clearInterval(gameTimer.clearTime);
 						//draw original image on canvas with stats on top
 						//later save them into local variables
@@ -420,6 +428,20 @@
 				//takes away the last element on the array
 				this.shorten = function() {
 					this.rList.pop();
+				}
+
+				this.stats = function() {
+					ctxGrad.globalAlpha = 0.7;
+					for (let i = 0; i < this.rListCopy.length; i++) {
+						ctxGrad.fillStyle = this.rListCopy[i].gradient;
+						let path = this.rListCopy[i].path;
+						ctxGrad.fill(path);
+					}
+
+					ctxGrad.font = "300px Courier New";
+					ctxGrad.fillStyle = "black";
+					ctxGrad.textAlign = "center";
+					ctxGrad.fillText(`Current time: ${gameTimer.minutes} : ${gameTimer.seconds}`, canvasGrad.width/2, canvasGrad.height/2);
 				}
 			}
 
