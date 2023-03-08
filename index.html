@@ -19,18 +19,36 @@
 				/*overflow: hidden;*/
 			}
 
+
 			@media (orientation: portrait) {
 				canvas {
+					width: 95vw;
+					height: 95vw;
+				}
+
+				table {
 					width: 100vw;
-					height: 100vw;
+					height: 5vh;
 				}
 			}
 
 			@media (orientation: landscape) {
 				canvas {
-					width: 100vh;
-					height: 100vh;
+					width: 95vh;
+					height: 95vh;
 				}
+
+				table {
+					width: 95vh;
+					height: 5vh;
+				}
+			}
+
+			table {
+				border: 1px solid red;
+				margin-left: auto;
+				margin-right: auto;
+				background-color: black;
 			}
 
 			/* The Modal (background) */
@@ -101,6 +119,14 @@
     <body>
 
 		<div style="text-align: center">
+			<table>
+				<tr>
+					<td id="currentTime">Current time: </td>
+					<td id="minute">00</td>
+					<td id="colon">:</td>
+					<td id="second">00</td>
+				</tr>
+			</table>
 			<canvas id="myCanvasGrad" style="object-fit: contain;"></canvas>
 		</div>
 
@@ -200,15 +226,15 @@
 			grdBg2.addColorStop(colorStop4, color1);
 			grdBg2.addColorStop(1, "#000000");
 
-			var x1 = getRandomInt(1024, 2048);
-			var x2 = getRandomInt(0, 1000);
-			var y1 = getRandomInt(256, 1532);
-			var y2 = getRandomInt(0, 1000);
+			//var x1 = getRandomInt(1024, 2048);
+			//var x2 = getRandomInt(0, 1000);
+			//var y1 = getRandomInt(256, 1532);
+			//var y2 = getRandomInt(0, 1000);
 			//var width1
-			var height1 = getRandomInt(2048, 3100);
-			var height2 = getRandomInt(1024, 2048);
-			var height3 = getRandomInt(512, 1024);
-			var height4 = getRandomInt(512, 1024);
+			//var height1 = getRandomInt(2048, 3100);
+			//var height2 = getRandomInt(1024, 2048);
+			//var height3 = getRandomInt(512, 1024);
+			//var height4 = getRandomInt(512, 1024);
 
 			var lastSquare;
 
@@ -230,6 +256,58 @@
 			//objects
 			var rectangles = new Rectangles(plusSquares);
 			var a = new AudioContext();
+			var gameTimer = {
+				seconds: 0,
+				minutes: 0,
+				clearTime: -1
+			};
+
+			//Start gameTimer
+			var startTimer = function() {
+				if (gameTimer.seconds === 59) {
+					gameTimer.minutes++;
+					gameTimer.seconds = 0;
+				} else {
+					gameTimer.seconds++;
+				}
+
+				// Ensure that single digit seconds are preceded with a 0
+				var formattedSec = "0";
+				var formattedMin = "0";
+				if (gameTimer.seconds < 10) {
+					formattedSec += gameTimer.seconds;
+				} else {
+					formattedSec = String(gameTimer.seconds);
+				}
+
+				if (gameTimer.minutes < 10) {
+					formattedMin += gameTimer.minutes;
+				} else {
+					formattedMin = String(gameTimer.minutes);
+				}
+
+				document.getElementById("minute").innerHTML = formattedMin;
+				document.getElementById("second").innerHTML = formattedSec;
+
+			};
+
+			// Resets timer state and restarts timer
+			function resetTimer() {
+				clearInterval(gameTimer.clearTime);
+				gameTimer.seconds = 0;
+				gameTimer.minutes = 0;
+
+				document.getElementById("currentTime").style.color = color1;
+				document.getElementById("colon").style.color = color1;
+				document.getElementById("second").style.color = color2;
+				document.getElementById("minute").style.color = color2;
+
+
+				document.getElementById("minute").innerHTML = "00";
+				document.getElementById("second").innerHTML = "00";
+
+				gameTimer.clearTime = setInterval(startTimer, 1000);
+			}
 
 			//shuffle default elements of the array
 			rectangles.rList = [...array].sort(() => Math.random() - 0.5);
@@ -313,6 +391,9 @@
 						this.draw();
 					} else {
 						console.log("WINNER");
+						clearInterval(gameTimer.clearTime);
+						//draw original image on canvas with stats on top
+						//later save them into local variables
 					}
 				}
 
@@ -358,6 +439,9 @@
 			let timer;
 			document.getElementById("myCanvasGrad").addEventListener('click', function(e) {
 				if (e.detail === 1) {
+					if(gameTimer.seconds == 0 && gameTimer.minutes == 0){
+						resetTimer();
+					}
 					timer = setTimeout(() => {
 						const rect = canvasGrad.getBoundingClientRect();
 						const elementRelativeX = e.clientX - rect.left;
