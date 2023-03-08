@@ -228,11 +228,10 @@
 			];
 
 			//objects
-			var yesSound = new Sound("sounds/yes.wav");
-			var noSound = new Sound("sounds/no.wav");
 			var rectangles = new Rectangles(plusSquares);
+			var a = new AudioContext();
 
-
+			//shuffle default elements of the array
 			rectangles.rList = [...array].sort(() => Math.random() - 0.5);
 			console.log(rectangles.rList);
 
@@ -323,21 +322,19 @@
 				}
 			}
 
-			//sound constructor
-			function Sound(src) {
-				this.sound = document.createElement("audio");
-				this.sound.src = src;
-				this.sound.setAttribute("preload", "auto");
-				this.sound.setAttribute("controls", "none");
-				this.sound.style.display = "none";
-				document.body.appendChild(this.sound);
-				this.play = function(){
-					this.sound.play();
-				}
-				this.stop = function(){
-					this.sound.pause();
-				}
+			//sound
+			function beep(vol, freq, duration){
+				v = a.createOscillator()
+				u = a.createGain()
+				v.connect(u)
+				v.frequency.value=freq
+				v.type="sine"
+				u.connect(a.destination)
+				u.gain.value=vol*0.01
+				v.start(a.currentTime)
+				v.stop(a.currentTime+duration*0.001)
 			}
+
 
 			/*canvasGrad.addEventListener("click", function(e) {
 				const rect = canvasGrad.getBoundingClientRect();
@@ -374,10 +371,10 @@
 
 						//if click coordinates are inside last rectangle's path
 						if (ctxGrad.isPointInPath(lastSquare, canvasRelativeX, canvasRelativeY)) {
-							yesSound.play();
+							beep(999, 400, 250);
 							rectangles.updateCanvas();
 						} else {
-							noSound.play();
+							beep(999, 100, 250);
 						}
 
 					}, 200)
