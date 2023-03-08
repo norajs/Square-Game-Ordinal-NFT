@@ -196,7 +196,9 @@
 
 				// When the user clicks on <span> (x), close the modal
 				span.onclick = function() {
+					resumeTimer();
 					modal.style.display = "none";
+
 				}
 			}
 
@@ -319,6 +321,11 @@
 				document.getElementById("minute").innerHTML = "00";
 				document.getElementById("second").innerHTML = "00";
 
+				gameTimer.clearTime = setInterval(startTimer, 1000);
+			}
+
+			// Resets timer state and restarts timer
+			function resumeTimer() {
 				gameTimer.clearTime = setInterval(startTimer, 1000);
 			}
 
@@ -479,6 +486,7 @@
 			});
 			document.getElementById("myCanvasGrad").addEventListener('dblclick', function(e) {
 				clearTimeout(timer);
+				clearTimeout(gameTimer.clearTime);
 				modalUp();
 			})
 
