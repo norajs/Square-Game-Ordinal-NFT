@@ -359,7 +359,7 @@
 
 				//add a new object to the array
 				this.adder = function() {
-					console.log(this.plusSquares);
+					console.log(this.maxLevel);
 					for (let i = 0; i < plusSquares; i++) {
 						let x = getRandomInt(0, 3096);
 						let y = getRandomInt(0, 3096);
@@ -459,7 +459,8 @@
 			let timer;
 			document.getElementById("myCanvasGrad").addEventListener('click', function(e) {
 				if (e.detail === 1) {
-					if(gameTimer.seconds == 0 && gameTimer.minutes == 0){
+					//if(gameTimer.seconds == 0 && gameTimer.minutes == 0){
+					if(gameTimer.clearTime === -1){
 						resetTimer();
 					}
 					timer = setTimeout(() => {
