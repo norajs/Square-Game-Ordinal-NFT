@@ -151,8 +151,21 @@
 				return Math.random() * (max - min) + min;
 			}
 
-			function randomColor() {
+			/* deprecated because other one filters out dark colors
+			 function randomColor() {
 				return '#'+(Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
+			}*/
+
+//rgb light only
+			function randomColor2() {
+				var r = Math.floor(Math.random() * 256);
+				var g = Math.floor(Math.random() * 256);
+				var b = Math.floor(Math.random() * 256);
+
+				if ((r + g + b) < 100) {
+					randomColor2();
+				}
+				return `rgb(${r}, ${g}, ${b})`;
 			}
 
 			function releaseCanvas(canvas) {
@@ -205,8 +218,8 @@
 			/*Globals*/
 			var plusSquares = getRandomInt(4, 47);
 
-			var color1 = randomColor();
-			var color2 = randomColor();
+			var color1 = randomColor2(); console.log("Color 1: ", color1);
+			var color2 = randomColor2(); console.log("Color 2: ", color2);
 			//var squareCounter = 7;
 
 			var colorStop1 = Math.random();
