@@ -45,7 +45,6 @@
 			}
 
 			table {
-				border: 1px solid red;
 				margin-left: auto;
 				margin-right: auto;
 				background-color: black;
@@ -235,11 +234,12 @@
 			var ctxGrad = canvasGrad.getContext("2d");
 
 			/*Globals*/
-			//var plusSquares = getRandomInt(4, 47);
-			var plusSquares = getRandomInt(4, 7);
+			var plusSquares = getRandomInt(4, 47);
+			//var plusSquares = getRandomInt(10, 10);
 
-			var color1 = randomColor2(); console.log("Color 1: ", color1);
-			var color2 = randomColor2(); console.log("Color 2: ", color2);
+
+			var color1 = randomColor2(); //console.log("Color 1: ", color1);
+			var color2 = randomColor2(); //console.log("Color 2: ", color2);
 			//var squareCounter = 7;
 
 			var colorStop1 = Math.random();
@@ -349,7 +349,7 @@
 
 			//shuffle default elements of the array
 			rectangles.rList = [...array].sort(() => Math.random() - 0.5);
-			console.log(rectangles.rList);
+			//console.log(rectangles.rList);
 
 
 //ACTION
@@ -361,7 +361,7 @@
 			rectangles.addPaths();
 			//draw squares from array
 			rectangles.draw();
-			console.log("rLIST COPY", rectangles.rListCopy);
+			//console.log("rLIST COPY", rectangles.rListCopy);
 
 
 
@@ -390,7 +390,7 @@
 						let gradient = getRandomInt(0, 1) > 0 ? grdBg1 : grdBg2;
 						this.rList.push({x: x, y: y, width: width, height: height, gradient: gradient });
 					}
-					console.log(this.rList);
+					//console.log(this.rList);
 				}
 
 				this.addPaths = function() {
@@ -413,12 +413,12 @@
 						//DRAW RECTANGLES FROM LIST
 						//THIS RUNS INITIALLY, THEN EVERY TIME A CLICK IS TRUE WITH UPDATED LIST (AFTER CLEAR RECT)
 						if (i == this.rList.length -1) {
-							ctxGrad.fillStyle = "red";
-							//ctxGrad.fillStyle = this.rList[i].gradient;
+							//ctxGrad.fillStyle = "red";
+							ctxGrad.fillStyle = this.rList[i].gradient;
 
-							console.log(`X: ${this.rList[i].x} / ${this.rList[i].x} + ${this.rList[i].width}`);
-							console.log(`Y: ${this.rList[i].y} / ${this.rList[i].y} + ${this.rList[i].height}`);
-							console.log(`#######################`);
+							//console.log(`X: ${this.rList[i].x} / ${this.rList[i].x} + ${this.rList[i].width}`);
+							//console.log(`Y: ${this.rList[i].y} / ${this.rList[i].y} + ${this.rList[i].height}`);
+							//console.log(`#######################`);
 						} else {
 							ctxGrad.fillStyle = this.rList[i].gradient;
 						}
@@ -449,6 +449,7 @@
 				}
 
 				this.stats = function() {
+					//redraw canvas
 					ctxGrad.globalAlpha = 0.7;
 					for (let i = 0; i < this.rListCopy.length; i++) {
 						ctxGrad.fillStyle = this.rListCopy[i].gradient;
@@ -456,6 +457,31 @@
 						ctxGrad.fill(path);
 					}
 
+					//update stats in the local storage
+					var newKey = this.maxLevel.toString(); console.log("newKey: ", newKey); console.log("newKey type: ", typeof(newKey));
+					var currentTime = formatTime(gameTimer.minutes) + ":" + formatTime(gameTimer.seconds); console.log("currentTime: ", currentTime);
+					if (newKey in localStorage) {
+						//existing stats
+						var existingTimeArray = localStorage.getItem(newKey).split(":");
+						var existingMin = parseInt(existingTimeArray[0], 10); console.log("Existing min: ", existingMin);
+						var existingSec = parseInt(existingTimeArray[1], 10); console.log("Existing sec: ", existingSec);
+						//current stats
+						var currentTimeArray = currentTime.split(":");
+						var currentMin = parseInt(currentTimeArray[0], 10); console.log("Current min: ", currentMin);
+						var currentSec = parseInt(currentTimeArray[1], 10); console.log("Current sec: ", currentSec);
+
+						if (currentMin < existingMin) {
+							localStorage.setItem(newKey, currentTime);
+						} else if (currentMin == existingMin) {
+							if (currentSec < existingSec) {
+								localStorage.setItem(newKey, currentTime);
+							}
+						}
+					} else {
+						localStorage.setItem(newKey, currentTime); console.log("Not logged yet: ", newKey);
+					}
+
+					//print stats on top of art on the canvas
 					ctxGrad.font = "bold 100px Courier New";
 					ctxGrad.fillStyle = "black";
 					ctxGrad.textAlign = "center";
@@ -465,11 +491,14 @@
 					const d = new Date();
 
 					//ctxGrad.fillText(congrats, canvasGrad.width/2, canvasGrad.height/3);
-					ctxGrad.fillText(`Difficulty level: ${plusSquares}`, canvasGrad.width/2, canvasGrad.height/3 + fontHeight);
+					ctxGrad.fillText(`Difficulty level: ${this.maxLevel}`, canvasGrad.width/2, canvasGrad.height/3 + fontHeight);
 					ctxGrad.fillText(`Completed in: ${formatTime(gameTimer.minutes)}:${formatTime(gameTimer.seconds)}`, canvasGrad.width/2, canvasGrad.height/3 + 2 * fontHeight);
+					ctxGrad.fillText(`Best time for Level ${this.maxLevel}: ${localStorage.getItem(newKey)}`, canvasGrad.width/2, canvasGrad.height/3 + 3 * fontHeight);
 
 					ctxGrad.font = "bold 100px Courier New";
 					ctxGrad.fillText(`${d}`, canvasGrad.width/2, canvasGrad.height/2);
+
+
 				}
 			}
 
@@ -520,9 +549,9 @@
 						const canvasRelativeX = elementRelativeX * canvasGrad.width / rect.width;
 						const canvasRelativeY = elementRelativeY * canvasGrad.height / rect.height;
 
-						console.log(`Click X: ${canvasRelativeX}`);
-						console.log(`Click Y: ${canvasRelativeY}`);
-						console.log(`-----------------------`);
+						//console.log(`Click X: ${canvasRelativeX}`);
+						//console.log(`Click Y: ${canvasRelativeY}`);
+						//console.log(`-----------------------`);
 
 						//if click coordinates are inside last rectangle's path
 						if (ctxGrad.isPointInPath(lastSquare, canvasRelativeX, canvasRelativeY)) {
