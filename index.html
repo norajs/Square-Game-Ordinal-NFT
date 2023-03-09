@@ -51,6 +51,11 @@
 				background-color: black;
 			}
 
+			mark {
+				background-color:rgba(243, 245, 39, 0.5);
+				color: black;
+			}
+
 			/* The Modal (background) */
 			.modal {
 				display: none; /* Hidden by default */
@@ -168,6 +173,16 @@
 				return `rgb(${r}, ${g}, ${b})`;
 			}
 
+			function formatTime(time) {
+				var formattedTime = "0";
+				if (time < 10) {
+					formattedTime += time;
+				} else {
+					formattedTime = String(time);
+				}
+				return formattedTime;
+			}
+
 			function releaseCanvas(canvas) {
 				canvas.width = 1;
 				canvas.height = 1;
@@ -218,7 +233,8 @@
 			var ctxGrad = canvasGrad.getContext("2d");
 
 			/*Globals*/
-			var plusSquares = getRandomInt(4, 47);
+			//var plusSquares = getRandomInt(4, 47);
+			var plusSquares = getRandomInt(4, 7);
 
 			var color1 = randomColor2(); console.log("Color 1: ", color1);
 			var color2 = randomColor2(); console.log("Color 2: ", color2);
@@ -287,22 +303,22 @@
 				}
 
 				// Ensure that single digit seconds are preceded with a 0
-				var formattedSec = "0";
-				var formattedMin = "0";
-				if (gameTimer.seconds < 10) {
-					formattedSec += gameTimer.seconds;
-				} else {
-					formattedSec = String(gameTimer.seconds);
-				}
+				//var formattedSec = "0";
+				//var formattedMin = "0";
+				//if (gameTimer.seconds < 10) {
+				//	formattedSec += gameTimer.seconds;
+				//} else {
+				//	formattedSec = String(gameTimer.seconds);
+				//}
 
-				if (gameTimer.minutes < 10) {
-					formattedMin += gameTimer.minutes;
-				} else {
-					formattedMin = String(gameTimer.minutes);
-				}
+				//if (gameTimer.minutes < 10) {
+				//	formattedMin += gameTimer.minutes;
+				//} else {
+				//	formattedMin = String(gameTimer.minutes);
+				//}
 
-				document.getElementById("minute").innerHTML = formattedMin;
-				document.getElementById("second").innerHTML = formattedSec;
+				document.getElementById("minute").innerHTML = formatTime(gameTimer.minutes);
+				document.getElementById("second").innerHTML = formatTime(gameTimer.seconds);
 
 			};
 
@@ -438,10 +454,20 @@
 						ctxGrad.fill(path);
 					}
 
-					ctxGrad.font = "300px Courier New";
+					ctxGrad.font = "bold 100px Courier New";
 					ctxGrad.fillStyle = "black";
 					ctxGrad.textAlign = "center";
-					ctxGrad.fillText(`Current time: ${gameTimer.minutes} : ${gameTimer.seconds}`, canvasGrad.width/2, canvasGrad.height/2);
+					var congrats = "Congratulations!";
+					let metrics = ctxGrad.measureText(congrats);
+					let fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+					const d = new Date();
+
+					//ctxGrad.fillText(congrats, canvasGrad.width/2, canvasGrad.height/3);
+					ctxGrad.fillText(`Difficulty level: ${plusSquares}`, canvasGrad.width/2, canvasGrad.height/3 + fontHeight);
+					ctxGrad.fillText(`Completed in: ${formatTime(gameTimer.minutes)}:${formatTime(gameTimer.seconds)}`, canvasGrad.width/2, canvasGrad.height/3 + 2 * fontHeight);
+
+					ctxGrad.font = "bold 100px Courier New";
+					ctxGrad.fillText(`${d}`, canvasGrad.width/2, canvasGrad.height/2);
 				}
 			}
 
