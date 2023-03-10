@@ -368,8 +368,8 @@
 			var ctxCanvasStats = canvasStats.getContext("2d");
 
 			/*Globals*/
-			var plusSquares = getRandomInt(4, 22);
-			//var plusSquares = getRandomInt(4, 4);
+			//var plusSquares = getRandomInt(4, 22);
+			var plusSquares = getRandomInt(4, 4);
 			var Level = plusSquares + 3;
 
 
@@ -583,7 +583,9 @@
 						//later save them into local variables
 						document.getElementById("btn").style.display = "block";
 					}
-					Level -= 1;
+					if (Level > 0) {
+						Level -= 1;
+					}
 					document.getElementById("rectLeft").innerHTML = `Rectangles left: ${Level}`;
 				}
 
