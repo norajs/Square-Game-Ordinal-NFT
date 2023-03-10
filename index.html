@@ -30,6 +30,11 @@
 					width: 100vw;
 					height: 5vh;
 				}
+
+				#userNameModal {
+					left: 50%;
+					top: 58vw;
+				}
 			}
 
 			@media (orientation: landscape) {
@@ -41,6 +46,11 @@
 				table {
 					width: 95vh;
 					height: 5vh;
+				}
+
+				#userNameModal {
+					left: 50%;
+					top: 50%;
 				}
 			}
 
@@ -122,6 +132,33 @@
 				}
 			}
 
+			#userNameModal {
+				display: none;
+				position: absolute;
+				transform: translate(-50%, -50%);
+				text-align: center;
+			}
+
+			form {
+				text-align: center;
+				font-family: "Courier New";
+			}
+
+			input[type="text"] {
+				border-radius: 0;
+				border: none;
+				background-color: white; /* Fallback color */
+				background-color: rgba(0,0,0,0.2); /* Black w/ opacity */
+			}
+
+			input[type="text"]:focus {
+				outline: none !important;
+				border: 1px solid black;
+				box-shadow: 0 0 10px #719ECE;
+			}
+
+
+
 
 
 		</style>
@@ -133,11 +170,12 @@
 			<table>
 				<tr>
 					<td id="rectLeft" style="text-align: left; padding-left: 5px; width: 35%;"></td>
-					<td style="text-align: center; width: 30%"><button id="btn">SAVE YOUR STATS</button></td>
+					<td style="text-align: center; width: 30%"><button id="btn" onclick="statsModalUp();">SAVE YOUR STATS</button></td>
 					<td id="time" style="text-align: right; padding-right: 5px; width: 35%;">00:00</td>
 				</tr>
 			</table>
 			<canvas id="myCanvasGrad" style="object-fit: contain;"></canvas>
+			<canvas id="statsCanvas" style="object-fit: contain; display: none;"></canvas>
 		</div>
 
 		<!-- The Modal -->
@@ -147,6 +185,16 @@
 
 			<!-- Modal Content (The Image) -->
 			<img class="modal-content" id="img01" style="object-fit: contain; width: 100vw; height: 100vh;" width="4096" height="4096">
+
+		</div>
+
+		<!-- The UserName Modal -->
+		<div id="userNameModal">
+			<form name="getUserName" id="userNameForm" onsubmit="return false">
+				<label for="username">Type in username and press enter</label><br>
+				<input id="username" name="username" type="text"/>
+				<input type="submit" hidden/>
+			</form>
 
 		</div>
 
@@ -224,6 +272,84 @@
 				}
 			}
 
+			function statsModalUp() {
+				//ctxCanvasStats.globalAlpha = 1;
+				ctxCanvasStats.fillStyle = "black";
+				ctxCanvasStats.fillRect(0, 0, 4096, 4096);
+
+				ctxCanvasStats.fillStyle = "red";
+				ctxCanvasStats.font = "bold 200px Courier New";
+				ctxCanvasStats.fillText(`${localStorage.getItem("userName")} stats:`, 100, 200);
+
+				for (var i = 0; i < 19; i++){
+					var testText = "test";
+					let metrics = ctxCanvasStats.measureText(testText);
+					let fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+					ctxCanvasStats.fillStyle = "red";
+					ctxCanvasStats.font = "bold 100px Courier New";
+					let thisKey = String(i + 7);
+					var number = formatTime(i + 7);
+					if (thisKey in localStorage) {
+						ctxCanvasStats.fillText(`Level ${number}: ${localStorage.getItem(thisKey)}`, 100, 400 + i * fontHeight);
+					} else {
+						ctxCanvasStats.fillText(`Level ${number}: not available`, 100, 400 + i * fontHeight);
+					}
+
+				}
+
+				var inputVal = canvasStats.toDataURL({format: 'image/png', quality:1, width:4096, height:4096});
+				var img = new Image();
+				img.src = inputVal;
+
+				var modal = document.getElementById("myModal");
+
+				// Get the image and insert it inside the modal - use its "alt" text as a caption
+
+				var modalImg = document.getElementById("img01");
+
+
+				modal.style.display = "block";
+				modalImg.src = inputVal;
+
+				// Get the <span> element that closes the modal
+				var span = document.getElementsByClassName("close")[0];
+
+				// When the user clicks on <span> (x), close the modal
+				span.onclick = function() {
+					if (rectangles.rList.length > 0) {
+						resumeTimer();
+					}
+					modal.style.display = "none";
+
+				}
+			}
+
+			function userNameModalUp() {
+				var modal = document.getElementById("userNameModal");
+
+				modal.style.display = "block";
+
+				// Get the <span> element that closes the modal
+				var span = document.getElementsByClassName("close")[0];
+
+				// When the user clicks on <span> (x), close the modal
+				/*span.onclick = function() {
+					if (rectangles.rList.length > 0) {
+						resumeTimer();
+					}
+					modal.style.display = "none";
+
+				}*/
+				document.getElementById("username").addEventListener('keypress', function (e) {
+					if (e.key === 'Enter') {
+						//save username
+						let userName = document.getElementById("username").value;
+						localStorage.setItem("userName", userName);
+						modal.style.display = "none";
+					}
+				});
+			}
+
 			function draw_black() {
 				ctxGrad.globalAlpha = 1;
 				ctxGrad.fillStyle = "black";
@@ -234,14 +360,16 @@
 			var canvasGrad = document.getElementById('myCanvasGrad');
 			canvasGrad.width =4096;
 			canvasGrad.height = 4096;
-			//canvasGrad.style.width = "100vw";
-			//canvasGrad.style.height = '100vh';
-			//canvasGrad.getContext('2d').scale(2,2);
 			var ctxGrad = canvasGrad.getContext("2d");
+			//stats canvas
+			var canvasStats = document.getElementById('statsCanvas');
+			canvasStats.width =4096;
+			canvasStats.height = 4096;
+			var ctxCanvasStats = canvasStats.getContext("2d");
 
 			/*Globals*/
 			var plusSquares = getRandomInt(4, 22);
-			//var plusSquares = getRandomInt(10, 10);
+			//var plusSquares = getRandomInt(4, 4);
 			var Level = plusSquares + 3;
 
 
@@ -368,6 +496,13 @@
 			//draw squares from array
 			rectangles.draw();
 			//console.log("rLIST COPY", rectangles.rListCopy);
+
+			//ask for username
+			if (!localStorage["userName"]) {
+				userNameModalUp();
+			}
+
+
 
 
 
