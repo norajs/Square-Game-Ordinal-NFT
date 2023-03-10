@@ -713,12 +713,15 @@
 						//console.log(`-----------------------`);
 
 						//if click coordinates are inside last rectangle's path
-						if (ctxGrad.isPointInPath(lastSquare, canvasRelativeX, canvasRelativeY)) {
-							beep(999, 400, 250);
-							rectangles.updateCanvas();
-						} else {
-							beep(999, 100, 250);
+						if (rectangles.rList.length > 0) {
+							if (ctxGrad.isPointInPath(lastSquare, canvasRelativeX, canvasRelativeY)) {
+								beep(999, 400, 250);
+								rectangles.updateCanvas();
+							} else {
+								beep(999, 100, 250);
+							}
 						}
+
 
 					}, 200)
 				}
