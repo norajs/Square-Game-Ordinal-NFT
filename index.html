@@ -48,11 +48,18 @@
 				margin-left: auto;
 				margin-right: auto;
 				background-color: black;
+				font: normal 12px Courier New;
 			}
 
-			mark {
-				background-color:rgba(243, 245, 39, 0.5);
-				color: black;
+
+			#btn {
+				padding: 2px;
+				text-align: center;
+				text-decoration: none;
+				display: none;
+				margin-left: auto;
+				margin-right: auto;
+				font: normal 10px Courier New;
 			}
 
 			/* The Modal (background) */
@@ -125,10 +132,9 @@
 		<div style="text-align: center">
 			<table>
 				<tr>
-					<td id="currentTime">Current time: </td>
-					<td id="minute">00</td>
-					<td id="colon">:</td>
-					<td id="second">00</td>
+					<td id="rectLeft" style="text-align: left; padding-left: 5px; width: 35%;"></td>
+					<td style="text-align: center; width: 30%"><button id="btn">SAVE YOUR STATS</button></td>
+					<td id="time" style="text-align: right; padding-right: 5px; width: 35%;">00:00</td>
 				</tr>
 			</table>
 			<canvas id="myCanvasGrad" style="object-fit: contain;"></canvas>
@@ -236,6 +242,7 @@
 			/*Globals*/
 			var plusSquares = getRandomInt(4, 22);
 			//var plusSquares = getRandomInt(10, 10);
+			var Level = plusSquares + 3;
 
 
 			var color1 = randomColor2(); //console.log("Color 1: ", color1);
@@ -304,23 +311,10 @@
 					gameTimer.seconds++;
 				}
 
-				// Ensure that single digit seconds are preceded with a 0
-				//var formattedSec = "0";
-				//var formattedMin = "0";
-				//if (gameTimer.seconds < 10) {
-				//	formattedSec += gameTimer.seconds;
-				//} else {
-				//	formattedSec = String(gameTimer.seconds);
-				//}
+				//document.getElementById("minute").innerHTML = formatTime(gameTimer.minutes);
+				//document.getElementById("second").innerHTML = formatTime(gameTimer.seconds);
+				document.getElementById("time").innerHTML = "Current time: " + formatTime(gameTimer.minutes) + "<span id='colonSpan'>:</span>" + formatTime(gameTimer.seconds);
 
-				//if (gameTimer.minutes < 10) {
-				//	formattedMin += gameTimer.minutes;
-				//} else {
-				//	formattedMin = String(gameTimer.minutes);
-				//}
-
-				document.getElementById("minute").innerHTML = formatTime(gameTimer.minutes);
-				document.getElementById("second").innerHTML = formatTime(gameTimer.seconds);
 
 			};
 
@@ -330,16 +324,28 @@
 				gameTimer.seconds = 0;
 				gameTimer.minutes = 0;
 
-				document.getElementById("currentTime").style.color = color1;
-				document.getElementById("colon").style.color = color1;
-				document.getElementById("second").style.color = color2;
-				document.getElementById("minute").style.color = color2;
+				document.getElementById("rectLeft").style.color = color1;
+				//document.getElementById("currentTime").style.color = color2;
+				//document.getElementById("colon").style.color = color1;
+				//document.getElementById("second").style.color = color2;
+				//document.getElementById("minute").style.color = color2;
+				document.getElementById("time").style.color = color2;
+				//document.getElementById("btn").style.border = "1px solid";
+				///document.getElementById("btn").style.borderColor = color1;
+				document.getElementById("btn").style.color = color1;
+				document.getElementById("btn").style.backgroundColor = color2;
 
 
-				document.getElementById("minute").innerHTML = "00";
-				document.getElementById("second").innerHTML = "00";
+
+
+
+				document.getElementById("rectLeft").innerHTML = `Rectangles left: ${Level}`;
+				//document.getElementById("minute").innerHTML = "00";
+				//document.getElementById("second").innerHTML = "00";
+				document.getElementById("time").innerHTML = `Current time: 00:00`;
 
 				gameTimer.clearTime = setInterval(startTimer, 1000);
+
 			}
 
 			// Resets timer state and restarts timer
@@ -440,7 +446,10 @@
 						clearInterval(gameTimer.clearTime);
 						//draw original image on canvas with stats on top
 						//later save them into local variables
+						document.getElementById("btn").style.display = "block";
 					}
+					Level -= 1;
+					document.getElementById("rectLeft").innerHTML = `Rectangles left: ${Level}`;
 				}
 
 				//takes away the last element on the array
