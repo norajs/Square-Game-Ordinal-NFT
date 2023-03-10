@@ -169,9 +169,10 @@
 		<div style="text-align: center">
 			<table>
 				<tr>
-					<td id="rectLeft" style="text-align: left; padding-left: 5px; width: 35%;"></td>
-					<td style="text-align: center; width: 30%"><button id="btn" onclick="statsModalUp();">SAVE YOUR STATS</button></td>
-					<td id="time" style="text-align: right; padding-right: 5px; width: 35%;">00:00</td>
+					<td id="rectLeft" style="text-align: left; padding-left: 5px; width: 30%;"></td>
+					<td id="clicks" style="text-align: center; width: 25%">0</td>
+					<td style="text-align: center; width: 15%"><button id="btn" onclick="statsModalUp();">SAVE STATS</button></td>
+					<td id="time" style="text-align: right; padding-right: 5px; width: 30%;">00:00</td>
 				</tr>
 			</table>
 			<canvas id="myCanvasGrad" style="object-fit: contain;"></canvas>
@@ -369,8 +370,9 @@
 
 			/*Globals*/
 			//var plusSquares = getRandomInt(4, 22);
-			var plusSquares = getRandomInt(4, 4);
+			var plusSquares = getRandomInt(5, 5);
 			var Level = plusSquares + 3;
+			var clickCounter = 0;
 
 
 			var color1 = randomColor2(); //console.log("Color 1: ", color1);
@@ -453,21 +455,20 @@
 				gameTimer.minutes = 0;
 
 				document.getElementById("rectLeft").style.color = color1;
+				document.getElementById("clicks").style.color = color2;
+				document.getElementById("btn").style.color = color1;
+				document.getElementById("btn").style.backgroundColor = color2;
+				document.getElementById("time").style.color = color1;
 				//document.getElementById("currentTime").style.color = color2;
 				//document.getElementById("colon").style.color = color1;
 				//document.getElementById("second").style.color = color2;
 				//document.getElementById("minute").style.color = color2;
-				document.getElementById("time").style.color = color2;
+
 				//document.getElementById("btn").style.border = "1px solid";
 				///document.getElementById("btn").style.borderColor = color1;
-				document.getElementById("btn").style.color = color1;
-				document.getElementById("btn").style.backgroundColor = color2;
-
-
-
-
 
 				document.getElementById("rectLeft").innerHTML = `Rectangles left: ${Level}`;
+
 				//document.getElementById("minute").innerHTML = "00";
 				//document.getElementById("second").innerHTML = "00";
 				document.getElementById("time").innerHTML = `Current time: 00:00`;
@@ -586,6 +587,7 @@
 					if (Level > 0) {
 						Level -= 1;
 					}
+
 					document.getElementById("rectLeft").innerHTML = `Rectangles left: ${Level}`;
 				}
 
@@ -603,9 +605,13 @@
 						ctxGrad.fill(path);
 					}
 
+
+					console.log("Click counter: ", clickCounter)
 					//update stats in the local storage
 					var newKey = this.maxLevel.toString(); console.log("newKey: ", newKey); console.log("newKey type: ", typeof(newKey));
 					var currentTime = formatTime(gameTimer.minutes) + ":" + formatTime(gameTimer.seconds); console.log("currentTime: ", currentTime);
+					let newCurrentTime = currentTime + "  (" + clickCounter + ")";
+
 					if (newKey in localStorage) {
 						//existing stats
 						var existingTimeArray = localStorage.getItem(newKey).split(":");
@@ -616,15 +622,17 @@
 						var currentMin = parseInt(currentTimeArray[0], 10); console.log("Current min: ", currentMin);
 						var currentSec = parseInt(currentTimeArray[1], 10); console.log("Current sec: ", currentSec);
 
+
+
 						if (currentMin < existingMin) {
-							localStorage.setItem(newKey, currentTime);
+							localStorage.setItem(newKey, newCurrentTime);
 						} else if (currentMin == existingMin) {
 							if (currentSec < existingSec) {
-								localStorage.setItem(newKey, currentTime);
+								localStorage.setItem(newKey, newCurrentTime);
 							}
 						}
 					} else {
-						localStorage.setItem(newKey, currentTime); console.log("Not logged yet: ", newKey);
+						localStorage.setItem(newKey, newCurrentTime); console.log("Not logged yet: ", newKey);
 					}
 
 					//print stats on top of art on the canvas
@@ -638,7 +646,7 @@
 
 					//ctxGrad.fillText(congrats, canvasGrad.width/2, canvasGrad.height/3);
 					ctxGrad.fillText(`Difficulty level: ${this.maxLevel}`, canvasGrad.width/2, canvasGrad.height/3 + fontHeight);
-					ctxGrad.fillText(`Completed in: ${formatTime(gameTimer.minutes)}:${formatTime(gameTimer.seconds)}`, canvasGrad.width/2, canvasGrad.height/3 + 2 * fontHeight);
+					ctxGrad.fillText(`Completed in: ${formatTime(gameTimer.minutes)}:${formatTime(gameTimer.seconds)}  (${clickCounter})`, canvasGrad.width/2, canvasGrad.height/3 + 2 * fontHeight);
 					ctxGrad.fillText(`Best time for Level ${this.maxLevel}: ${localStorage.getItem(newKey)}`, canvasGrad.width/2, canvasGrad.height/3 + 3 * fontHeight);
 
 					ctxGrad.font = "bold 100px Courier New";
@@ -684,6 +692,11 @@
 			let timer;
 			document.getElementById("myCanvasGrad").addEventListener('click', function(e) {
 				if (e.detail === 1) {
+					if (rectangles.rList.length > 0) {
+						clickCounter += 1;
+						document.getElementById("clicks").innerHTML = `Clicks: ${clickCounter}`;
+					}
+
 					//if(gameTimer.seconds == 0 && gameTimer.minutes == 0){
 					if(gameTimer.clearTime === -1){
 						resetTimer();
